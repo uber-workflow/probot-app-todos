@@ -17,9 +17,9 @@ npm start
 
 See [docs/deploy.md](docs/deploy.md) if you would like to run your own instance of this app.
 
-[build-badge]: https://travis-ci.org/uber-web/probot-app-app-todos.svg?branch=master
-[build-href]: https://travis-ci.org/uber-web/probot-app-app-todos
-[deps-badge]: https://david-dm.org/uber-web/probot-app-app-todos.svg
-[deps-href]: https://david-dm.org/uber-web/probot-app-app-todos
-[npm-badge]: https://badge.fury.io/js/probot-app-app-todos.svg
-[npm-href]: https://www.npmjs.com/package/probot-app-app-todos
+[build-badge]: https://travis-ci.org/uber-web/probot-app-todos.svg?branch=master
+[build-href]: https://travis-ci.org/uber-web/probot-app-todos
+[deps-badge]: https://david-dm.org/uber-web/probot-app-todos.svg
+[deps-href]: https://david-dm.org/uber-web/probot-app-todos
+[npm-badge]: https://badge.fury.io/js/probot-app-todos.svg
+[npm-href]: https://www.npmjs.com/package/probot-app-todos
