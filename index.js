@@ -4,7 +4,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-const {join, dirname, basename, sep} = require('path');
+const {join} = require('path');
 
 module.exports = robot => {
   robot.on('pull_request.opened', check);
@@ -16,6 +16,7 @@ module.exports = robot => {
   async function reopenTodos(context) {
     // re-open todos that may have been closed
     const issue = context.payload.issue;
+    const {github} = context;
 
     const results = await github.search.code({
       q: `TODO+repo:${context.payload.repository.full_name}`,
@@ -35,9 +36,9 @@ module.exports = robot => {
       }),
     );
 
-    for (file of files) {
+    for (let file of files) {
       const todos = searchFile(file);
-      for (todo of todos) {
+      for (let todo of todos) {
         if (todo.issue === issue.number) {
           github.issues.edit(
             context.issue({
@@ -56,6 +57,7 @@ module.exports = robot => {
   }
 
   async function check(context) {
+    const {github} = context;
     const pr = context.payload.pull_request;
 
     function setStatus(status) {
@@ -148,7 +150,7 @@ module.exports = robot => {
       }
     });
 
-    for (todo of await Promise.all(issues)) {
+    for (let todo of await Promise.all(issues)) {
       if (todo.issueState !== 'open') {
         return setStatus({
           state: 'failure',
