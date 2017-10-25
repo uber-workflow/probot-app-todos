@@ -4,12 +4,9 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-const {join} = require('path');
-
 module.exports = robot => {
   robot.on('pull_request.opened', check);
   robot.on('pull_request.synchronize', check);
-  robot.on('pull_request.edited', check);
 
   robot.on('issues.closed', reopenTodos);
 
@@ -64,12 +61,17 @@ module.exports = robot => {
       const params = Object.assign(
         {
           sha: pr.head.sha,
-          context: 'TODOs',
+          context: 'probot/todos',
         },
         status,
       );
       return github.repos.createStatus(context.repo(params));
     }
+
+    setStatus({
+      state: 'pending',
+      description: 'Checking for TODOs',
+    });
 
     const compare = await context.github.repos.compareCommits(
       context.repo({
@@ -84,15 +86,22 @@ module.exports = robot => {
 
     const repoUrl = context.payload.repository.html_url;
 
-    // Get link to line/blame of TODO
-    // NOTE: for some reason GitHub breaks these URLs...
-    function getUrl(todo) {
-      return join(
+    function getBlameUrl(todo) {
+      return [
         repoUrl,
         'blame',
         pr.head.sha,
         `${todo.filename}#L${todo.line}`,
-      );
+      ].join('/');
+    }
+
+    function getBlobUrl(todo) {
+      return [
+        repoUrl,
+        'blob',
+        pr.head.sha,
+        `${todo.filename}#L${todo.line}`,
+      ].join('/');
     }
 
     const files = await Promise.all(
@@ -127,11 +136,25 @@ module.exports = robot => {
 
     // Early return if issue numbers are missing
     if (missingIssues.length) {
-      return setStatus({
+      setStatus({
         state: 'failure',
         description: 'TODO without open GitHub issue',
-        target_url: getUrl(missingIssues[0]),
+        target_url: getBlameUrl(missingIssues[0]),
       });
+
+      const urls = missingIssues.map(getBlobUrl);
+
+      const commentBody = ['Found TODOs without GitHub issues:', ...urls].join(
+        '\n',
+      );
+
+      context.github.issues.createComment(
+        context.issue({
+          body: commentBody,
+        }),
+      );
+
+      return;
     }
 
     const issues = withIssues.map(async todo => {
@@ -155,7 +178,7 @@ module.exports = robot => {
         return setStatus({
           state: 'failure',
           description: 'No open issue for TODO',
-          target_url: getUrl(todo),
+          target_url: getBlameUrl(todo),
         });
       }
     }
