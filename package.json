@@ -1,6 +1,6 @@
 {
   "name": "probot-app-todos",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Ensures TODOs have corresponding open issues on GitHub",
   "author": "Ryan Tsao <ryan.j.tsao@gmail.com>",
   "contributors": [],
