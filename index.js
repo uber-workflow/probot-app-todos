@@ -6,7 +6,7 @@
 
 module.exports = robot => {
   robot.on('pull_request.opened', check);
-  robot.on('pull_request.synchronized', check);
+  robot.on('pull_request.synchronize', check);
 
   robot.on('issues.closed', reopenTodos);
 
