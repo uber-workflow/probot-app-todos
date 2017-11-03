@@ -21,14 +21,23 @@ module.exports = robot => {
 
     const files = await Promise.all(
       results.data.items.map(async item => {
-        const res = await context.github.repos.getContent(
-          context.repo({
-            path: item.path,
-          }),
-        );
+        let contents = '';
+        try {
+          const res = await context.github.repos.getContent(
+            context.repo({
+              path: item.path,
+            }),
+          );
+          contents = Buffer.from(res.data.content, 'base64').toString();
+        } catch (err) {
+          if (err.code !== 403) {
+            // Could be too large, ignore it
+            throw err;
+          }
+        }
         return {
           filename: item.path,
-          contents: Buffer.from(res.data.content, 'base64').toString(),
+          contents,
         };
       }),
     );
@@ -106,15 +115,24 @@ module.exports = robot => {
 
     const files = await Promise.all(
       notRemoved.map(async file => {
-        const res = await context.github.repos.getContent(
-          context.repo({
-            path: file.filename,
-            ref: pr.head.sha,
-          }),
-        );
+        let contents = '';
+        try {
+          const res = await context.github.repos.getContent(
+            context.repo({
+              path: file.filename,
+              ref: pr.head.sha,
+            }),
+          );
+          contents = Buffer.from(res.data.content, 'base64').toString();
+        } catch (err) {
+          if (err.code !== 403) {
+            // Could be too large, ignore it
+            throw err;
+          }
+        }
         return {
           filename: file.filename,
-          contents: Buffer.from(res.data.content, 'base64').toString(),
+          contents,
         };
       }),
     );
