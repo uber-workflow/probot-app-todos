@@ -1,0 +1,7 @@
+version: '2'
+services:
+  probot-app-todos:
+    build: .
+    volumes:
+      - .:/probot-app-todos
+      - /probot-app-todos/node_modules/
