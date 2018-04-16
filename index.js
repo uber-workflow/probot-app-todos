@@ -89,8 +89,8 @@ module.exports = robot => {
       }),
     );
 
-    const notRemoved = compare.data.files.filter(
-      file => file.status !== 'removed',
+    const validFiles = compare.data.files.filter(
+      file => file.status !== 'removed' && !file.filename.includes('package.json'),
     );
 
     const repoUrl = context.payload.repository.html_url;
@@ -114,7 +114,7 @@ module.exports = robot => {
     }
 
     const files = await Promise.all(
-      notRemoved.map(async file => {
+      validFiles.map(async file => {
         let contents = '';
         try {
           const res = await context.github.repos.getContent(
