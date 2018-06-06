@@ -1,4 +1,4 @@
-FROM node:8.9.4@sha256:068a0746d03a072cddbe8c49082bcf80ede9d5f57839ad775df85d07228b2e6d
+FROM node:8.11.2@sha256:f10c8218e3f92b513af9120f5eda5fed35b651343f940881d696b958cc16ab43
 
 WORKDIR /probot-app-todos
 
