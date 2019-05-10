@@ -23,7 +23,7 @@ module.exports = robot => {
       results.data.items.map(async item => {
         let contents = '';
         try {
-          const res = await context.github.repos.getContent(
+          const res = await context.github.repos.getContents(
             context.repo({
               path: item.path,
             }),
@@ -46,7 +46,7 @@ module.exports = robot => {
       const todos = searchFile(file);
       for (let todo of todos) {
         if (todo.issue === issue.number) {
-          github.issues.edit(
+          github.issues.update(
             context.issue({
               state: 'open',
             }),
@@ -117,7 +117,7 @@ module.exports = robot => {
       notRemoved.map(async file => {
         let contents = '';
         try {
-          const res = await context.github.repos.getContent(
+          const res = await context.github.repos.getContents(
             context.repo({
               path: file.filename,
               ref: pr.head.sha,
